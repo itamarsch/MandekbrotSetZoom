@@ -7,8 +7,8 @@ pub struct Complex {
 }
 
 impl Complex {
-    pub fn mag(self) -> f64 {
-        self.re.hypot(self.img)
+    pub fn mag_squared(self) -> f64 {
+        self.re * self.re + self.img * self.img
     }
 }
 

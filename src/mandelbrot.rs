@@ -18,7 +18,8 @@ pub fn mandelbrot_iterations(c: Complex) -> u32 {
 
     loop {
         z0 = z0 * z0 + c;
-        if z0.mag() > (2f64) || iterations == MAX_ITERATIONS {
+        let mag_squared = z0.mag_squared();
+        if mag_squared > (4f64) || iterations == MAX_ITERATIONS {
             break iterations;
         }
         iterations += 1;
