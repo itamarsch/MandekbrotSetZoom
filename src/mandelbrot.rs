@@ -2,8 +2,8 @@ use colours::Hsv;
 
 use crate::{complex::Complex, SCREEN_SIDE};
 
-const MAX_ITERATIONS: u32 = 1000;
-const OFFSET: (f64, f64) = (-0.761574, -0.0847596);
+const MAX_ITERATIONS: u32 = 2000;
+const OFFSET: (f64, f64) = (-0.7746806106269039, -0.1374168856037867);
 
 pub fn mandelbrot_iterations(c: Complex) -> u32 {
     let mut iterations = 0;
