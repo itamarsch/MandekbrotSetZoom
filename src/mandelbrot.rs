@@ -45,6 +45,10 @@ pub fn mandelbrot_color(zoom: f64, x: f64, y: f64) -> Hsv<f32> {
     if iterations == MAX_ITERATIONS {
         Hsv::new(0f32, 0f32, 0f32)
     } else {
-        Hsv::new(iterations as f32 / MAX_ITERATIONS as f32, 1f32, 1f32)
+        Hsv::new(
+            (0.65 + iterations as f32 / MAX_ITERATIONS as f32) % 1.0, // Creates prettier gradient
+            1f32,
+            1f32,
+        )
     }
 }
