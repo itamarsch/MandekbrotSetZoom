@@ -1,4 +1,4 @@
-use std::error;
+use std::{error, time::Instant};
 
 use colours::{Hsv, Rgb};
 use mandelbrot::mandelbrot_color;
@@ -36,7 +36,9 @@ fn main() -> Result<(), Box<dyn error::Error>> {
                 _ => (),
             }
         }
+        let now = Instant::now();
         apply_to_all_pixels(&mut canvas, zoom);
+        println!("Frame took: {}", now.elapsed().as_secs_f32());
         canvas.present();
 
         zoom *= 0.9;
@@ -44,7 +46,6 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 
     Ok(())
 }
-
 fn apply_to_all_pixels(draw: &mut Canvas<Window>, zoom: f64) {
     (-HALF_SCREEN_SIDE..HALF_SCREEN_SIDE)
         .map(|x| (-HALF_SCREEN_SIDE..HALF_SCREEN_SIDE).map(move |y| (x, y)))
