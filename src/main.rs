@@ -1,13 +1,19 @@
 use std::{cell::RefCell, error, time::Instant};
+
 extern crate ocl;
-use colours::Rgb;
-use gpu::GPU_PROGRAM;
 use ocl::ProQue;
+
+use colours::Rgb;
 use sdl2::{event::Event, keyboard::Keycode};
 
-use crate::gpu::apply_to_all_pixels_gpu;
 mod cpu;
+#[allow(unused_imports)]
+use cpu::apply_to_all_pixels_cpu;
+
 mod gpu;
+#[allow(unused_imports)]
+use gpu::{apply_to_all_pixels_gpu, GPU_PROGRAM};
+
 const SCREEN_SIDE: f64 = 800f64;
 const HALF_SCREEN_SIDE: i32 = (SCREEN_SIDE / 2.0) as i32;
 
@@ -19,11 +25,13 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 
     let window = video_subsystem
         .window("Mandelbrot set", SCREEN_SIDE as u32, SCREEN_SIDE as u32)
-        .position_centered()
+        .position(0, 0)
+        .borderless()
         .build()?;
 
     let mut canvas = window.into_canvas().build()?;
 
+    // These lines are useless when running on CPU
     let pro_que = ProQue::builder()
         .src(GPU_PROGRAM)
         .dims((SCREEN_SIDE, SCREEN_SIDE))
@@ -51,6 +59,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         }
         let now = Instant::now();
         apply_to_all_pixels_gpu(&pro_que, &mut canvas, &buffer, rust_buffer.clone(), zoom)?;
+        //apply_to_all_pixels_cpu(&mut canvas, zoom);
         println!("Fps : {}", 1.0f32 / now.elapsed().as_secs_f32());
         canvas.present();
         if is_zooming {
