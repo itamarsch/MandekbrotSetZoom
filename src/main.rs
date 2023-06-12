@@ -1,17 +1,18 @@
-use std::{error, time::Instant};
-
+use std::{cell::RefCell, error, time::Instant};
+extern crate ocl;
 use colours::{Hsv, Rgb};
-use mandelbrot::mandelbrot_color;
-use rayon::prelude::*;
-use sdl2::{
-    event::Event, keyboard::Keycode, pixels::Color, rect::Point, render::Canvas, video::Window,
-};
-mod complex;
-mod mandelbrot;
+use gpu::GPU_PROGRAM;
+use ocl::ProQue;
+use sdl2::{event::Event, keyboard::Keycode};
 
-const SCREEN_SIDE: f64 = 1000f64;
+use crate::gpu::apply_to_all_pixels_gpu;
+mod cpu;
+mod gpu;
+const SCREEN_SIDE: f64 = 800f64;
 const HALF_SCREEN_SIDE: i32 = (SCREEN_SIDE / 2.0) as i32;
 
+pub const MAX_ITERATIONS: u16 = 2000;
+pub const OFFSET: (f64, f64) = (-0.7746806106269039, -0.1374168856037867);
 fn main() -> Result<(), Box<dyn error::Error>> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
@@ -22,6 +23,13 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         .build()?;
 
     let mut canvas = window.into_canvas().build()?;
+
+    let pro_que = ProQue::builder()
+        .src(GPU_PROGRAM)
+        .dims((SCREEN_SIDE, SCREEN_SIDE))
+        .build()?;
+    let buffer = pro_que.create_buffer::<u16>()?;
+    let rust_buffer = RefCell::new(vec![0u16; buffer.len()]);
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut zoom = 2.5f64;
@@ -37,8 +45,8 @@ fn main() -> Result<(), Box<dyn error::Error>> {
             }
         }
         let now = Instant::now();
-        apply_to_all_pixels(&mut canvas, zoom);
-        println!("Frame took: {}", now.elapsed().as_secs_f32());
+        apply_to_all_pixels_gpu(&pro_que, &mut canvas, &buffer, rust_buffer.clone(), zoom)?;
+        println!("Fps : {}", 1.0f32 / now.elapsed().as_secs_f32());
         canvas.present();
 
         zoom *= 0.9;
@@ -46,26 +54,19 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 
     Ok(())
 }
-fn apply_to_all_pixels(draw: &mut Canvas<Window>, zoom: f64) {
-    (-HALF_SCREEN_SIDE..HALF_SCREEN_SIDE)
-        .map(|x| (-HALF_SCREEN_SIDE..HALF_SCREEN_SIDE).map(move |y| (x, y)))
-        .flatten()
-        .par_bridge()
-        .into_par_iter()
-        .map(|(x, y)| {
-            let hsv = mandelbrot_color(zoom, x as f64, y as f64);
-            let rgb: Rgb<u8> = hsv_to_rgb(hsv);
-
-            (x + HALF_SCREEN_SIDE, y + HALF_SCREEN_SIDE, rgb)
-        })
-        .collect::<Vec<_>>()
-        .iter()
-        .for_each(|(x, y, rgb)| {
-            draw.set_draw_color(Color::RGB(rgb.red, rgb.green, rgb.blue));
-            draw.draw_point(Point::new(*x, *y)).unwrap();
-        });
-}
 
 fn hsv_to_rgb(hsv: Hsv<f32>) -> Rgb<u8> {
     Rgb::<u8>::from(Rgb::<f32>::from(hsv))
+}
+
+pub fn mandelbrot_color(iterations: u16) -> Hsv<f32> {
+    if iterations == MAX_ITERATIONS {
+        Hsv::new(0f32, 0f32, 0f32)
+    } else {
+        Hsv::new(
+            (0.65 + iterations as f32 / MAX_ITERATIONS as f32) % 1.0, // Creates prettier gradient
+            1f32,
+            1f32,
+        )
+    }
 }
