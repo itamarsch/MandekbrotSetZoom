@@ -1,6 +1,6 @@
 use std::{cell::RefCell, error, time::Instant};
 extern crate ocl;
-use colours::{Hsv, Rgb};
+use colours::Rgb;
 use gpu::GPU_PROGRAM;
 use ocl::ProQue;
 use sdl2::{event::Event, keyboard::Keycode};
@@ -49,24 +49,37 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         println!("Fps : {}", 1.0f32 / now.elapsed().as_secs_f32());
         canvas.present();
 
-        zoom *= 0.9;
+        zoom *= 0.95;
     }
 
     Ok(())
 }
 
-fn hsv_to_rgb(hsv: Hsv<f32>) -> Rgb<u8> {
-    Rgb::<u8>::from(Rgb::<f32>::from(hsv))
-}
-
-pub fn mandelbrot_color(iterations: u16) -> Hsv<f32> {
+pub fn mandelbrot_color(iterations: u16) -> Rgb<u8> {
     if iterations == MAX_ITERATIONS {
-        Hsv::new(0f32, 0f32, 0f32)
+        Rgb::new(0, 0, 0)
     } else {
-        Hsv::new(
-            (0.65 + iterations as f32 / MAX_ITERATIONS as f32) % 1.0, // Creates prettier gradient
-            1f32,
-            1f32,
-        )
+        palette(iterations)
     }
+}
+pub fn palette(iterations: u16) -> Rgb<u8> {
+    let rgb_palette = [
+        Rgb::new(66, 30, 15),
+        Rgb::new(25, 7, 26),
+        Rgb::new(9, 1, 47),
+        Rgb::new(4, 4, 73),
+        Rgb::new(0, 7, 100),
+        Rgb::new(12, 44, 138),
+        Rgb::new(24, 82, 177),
+        Rgb::new(57, 125, 209),
+        Rgb::new(134, 181, 229),
+        Rgb::new(211, 236, 248),
+        Rgb::new(241, 233, 191),
+        Rgb::new(248, 201, 95),
+        Rgb::new(255, 170, 0),
+        Rgb::new(204, 128, 0),
+        Rgb::new(153, 87, 0),
+        Rgb::new(106, 52, 3),
+    ];
+    rgb_palette[iterations as usize % rgb_palette.len()]
 }

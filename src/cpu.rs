@@ -1,8 +1,7 @@
-use colours::Rgb;
 use rayon::prelude::*;
 use sdl2::{pixels::Color, rect::Point, render::Canvas, video::Window};
 
-use crate::{hsv_to_rgb, mandelbrot_color, HALF_SCREEN_SIDE, OFFSET, SCREEN_SIDE};
+use crate::{mandelbrot_color, HALF_SCREEN_SIDE, OFFSET, SCREEN_SIDE};
 
 use self::complex::Complex;
 
@@ -23,8 +22,7 @@ pub fn apply_to_all_pixels_cpu(draw: &mut Canvas<Window>, zoom: f64) {
                 re: c_x + OFFSET.0,
                 img: c_y + OFFSET.1,
             });
-            let hsv = mandelbrot_color(iteration);
-            let rgb: Rgb<u8> = hsv_to_rgb(hsv);
+            let rgb = mandelbrot_color(iteration);
 
             (x + HALF_SCREEN_SIDE, y + HALF_SCREEN_SIDE, rgb)
         })

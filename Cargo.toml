@@ -10,3 +10,6 @@ colours = "0.1.1"
 ocl = "0.19.4"
 rayon = "1.7.0"
 sdl2 = "0.35.2"
+
+[profile.release]
+codegen-units = 1

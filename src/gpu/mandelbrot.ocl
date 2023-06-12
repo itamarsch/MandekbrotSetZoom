@@ -1,12 +1,8 @@
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
-__kernel void add(
-    __global ushort *buffer,
-    ushort max_iterations, double width,
-    int halfWidth,
-    double zoom,
-    double offset_x,
-    double offset_y)
-{
+__kernel void add(__global ushort *buffer, ushort max_iterations, double width,
+                  int halfWidth, double zoom, double offset_x,
+                  double offset_y) {
   int ix = get_global_id(0);
   int iy = get_global_id(1);
 
@@ -19,9 +15,9 @@ __kernel void add(
 
   double cImgSquared = cImg * cImg;
   double cMagSquared = cImgSquared + (cRe * cRe);
+  // Cardioid and Bulb check
   if ((cRe + 1.0) * (cRe + 1.0) + cImgSquared <= 0.0625 ||
-      cMagSquared * (8.0 * cMagSquared - 3.0) <= 0.09375 - cRe)
-  {
+      cMagSquared * (8.0 * cMagSquared - 3.0) <= 0.09375 - cRe) {
     buffer[(int)width * iy + ix] = max_iterations;
     return;
   }
@@ -32,8 +28,7 @@ __kernel void add(
   double zImgSquared = 0.0;
 
   uint iteration = 0;
-  while (zReSquared + zImgSquared <= 4.0 && iteration < max_iterations)
-  {
+  while (zReSquared + zImgSquared <= 4.0 && iteration < max_iterations) {
     // Faster algorithm that uses only three multiplications for each iteration
     zImg = (zRe + zRe) * zImg + cImg;
 
