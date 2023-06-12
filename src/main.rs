@@ -3,8 +3,7 @@ use std::{cell::RefCell, error, time::Instant};
 extern crate ocl;
 use ocl::ProQue;
 
-use colours::Rgb;
-use sdl2::{event::Event, keyboard::Keycode};
+use sdl2::{event::Event, keyboard::Keycode, pixels::Color};
 
 mod cpu;
 #[allow(unused_imports)]
@@ -70,31 +69,31 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     Ok(())
 }
 
-pub fn mandelbrot_color(iterations: u16) -> Rgb<u8> {
+pub fn mandelbrot_color(iterations: u16) -> Color {
     if iterations == MAX_ITERATIONS {
-        Rgb::new(0, 0, 0)
+        Color::BLACK
     } else {
         palette(iterations)
     }
 }
-pub fn palette(iterations: u16) -> Rgb<u8> {
-    let rgb_palette = [
-        Rgb::new(66, 30, 15),
-        Rgb::new(25, 7, 26),
-        Rgb::new(9, 1, 47),
-        Rgb::new(4, 4, 73),
-        Rgb::new(0, 7, 100),
-        Rgb::new(12, 44, 138),
-        Rgb::new(24, 82, 177),
-        Rgb::new(57, 125, 209),
-        Rgb::new(134, 181, 229),
-        Rgb::new(211, 236, 248),
-        Rgb::new(241, 233, 191),
-        Rgb::new(248, 201, 95),
-        Rgb::new(255, 170, 0),
-        Rgb::new(204, 128, 0),
-        Rgb::new(153, 87, 0),
-        Rgb::new(106, 52, 3),
-    ];
-    rgb_palette[iterations as usize % rgb_palette.len()]
+const RGB_PALETTE: [Color; 16] = [
+    Color::RGB(66, 30, 15),
+    Color::RGB(25, 7, 26),
+    Color::RGB(9, 1, 47),
+    Color::RGB(4, 4, 73),
+    Color::RGB(0, 7, 100),
+    Color::RGB(12, 44, 138),
+    Color::RGB(24, 82, 177),
+    Color::RGB(57, 125, 209),
+    Color::RGB(134, 181, 229),
+    Color::RGB(211, 236, 248),
+    Color::RGB(241, 233, 191),
+    Color::RGB(248, 201, 95),
+    Color::RGB(255, 170, 0),
+    Color::RGB(204, 128, 0),
+    Color::RGB(153, 87, 0),
+    Color::RGB(106, 52, 3),
+];
+pub fn palette(iterations: u16) -> Color {
+    RGB_PALETTE[iterations as usize % RGB_PALETTE.len()]
 }

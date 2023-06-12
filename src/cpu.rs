@@ -1,5 +1,5 @@
 use rayon::prelude::*;
-use sdl2::{pixels::Color, rect::Point, render::Canvas, video::Window};
+use sdl2::{rect::Point, render::Canvas, video::Window};
 
 use crate::{mandelbrot_color, HALF_SCREEN_SIDE, OFFSET, SCREEN_SIDE};
 
@@ -29,7 +29,7 @@ pub fn apply_to_all_pixels_cpu(draw: &mut Canvas<Window>, zoom: f64) {
         .collect::<Vec<_>>()
         .iter()
         .for_each(|(x, y, rgb)| {
-            draw.set_draw_color(Color::RGB(rgb.red, rgb.green, rgb.blue));
+            draw.set_draw_color(*rgb);
             draw.draw_point(Point::new(*x, *y)).unwrap();
         });
 }

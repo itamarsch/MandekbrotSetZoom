@@ -1,7 +1,7 @@
 use std::{cell::RefCell, ops::DerefMut};
 
 use ocl::{Buffer, ProQue};
-use sdl2::{pixels::Color, rect::Point, render::Canvas, video::Window};
+use sdl2::{rect::Point, render::Canvas, video::Window};
 
 pub const GPU_PROGRAM: &'static str = include_str!("./gpu/mandelbrot.ocl");
 
@@ -41,7 +41,7 @@ pub fn apply_to_all_pixels_gpu(
             let x = index % SCREEN_SIDE as usize;
 
             let rgb = mandelbrot_color(*iterations);
-            draw.set_draw_color(Color::RGB(rgb.red, rgb.green, rgb.blue));
+            draw.set_draw_color(rgb);
             draw.draw_point(Point::new(x as i32, y as i32)).unwrap();
         });
     Ok(())
