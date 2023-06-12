@@ -9,6 +9,7 @@ use self::complex::Complex;
 mod complex;
 mod mandelbrot;
 
+#[allow(unused)]
 pub fn apply_to_all_pixels_cpu(draw: &mut Canvas<Window>, zoom: f64) {
     (-HALF_SCREEN_SIDE..HALF_SCREEN_SIDE)
         .map(|x| (-HALF_SCREEN_SIDE..HALF_SCREEN_SIDE).map(move |y| (x, y)))
