@@ -33,6 +33,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 
     let mut event_pump = sdl_context.event_pump()?;
     let mut zoom = 2.5f64;
+    let mut is_zooming = false;
     'main: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -41,6 +42,10 @@ fn main() -> Result<(), Box<dyn error::Error>> {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => break 'main,
+                Event::KeyDown {
+                    keycode: Some(Keycode::Space),
+                    ..
+                } => is_zooming = !is_zooming,
                 _ => (),
             }
         }
@@ -48,8 +53,9 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         apply_to_all_pixels_gpu(&pro_que, &mut canvas, &buffer, rust_buffer.clone(), zoom)?;
         println!("Fps : {}", 1.0f32 / now.elapsed().as_secs_f32());
         canvas.present();
-
-        zoom *= 0.95;
+        if is_zooming {
+            zoom *= 0.95;
+        }
     }
 
     Ok(())
