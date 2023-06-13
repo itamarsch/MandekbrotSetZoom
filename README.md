@@ -7,7 +7,7 @@ There are two implementations here, one in the cpu directory and one in the gpu 
 Follow instuctions for setting up SDL and OCL on your machine
 
 # Run 
-To run CPU version: `RUSTFLAGS="-C target-cpu=native" cargo run --release -F "cpu"`  
+To run CPU version: `RUSTFLAGS="-C target-cpu=native" cargo run --release -F`  
 To run GPU version: `RUSTFLAGS="-C target-cpu=native" cargo run --release -F "gpu"`
 
 

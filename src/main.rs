@@ -18,9 +18,9 @@ use sdl2::{event::Event, keyboard::Keycode};
 
 mod palette;
 
-#[cfg(feature = "cpu")]
+#[cfg(not(feature = "gpu"))]
 mod cpu;
-#[cfg(feature = "cpu")]
+#[cfg(not(feature = "gpu"))]
 use cpu::apply_to_all_pixels_cpu;
 
 const SCREEN_HEIGHT: f64 = SCREEN_WIDTH * (1.0 / SCREEN_RATIO);
@@ -66,7 +66,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         let now = Instant::now();
         #[cfg(feature = "gpu")]
         apply_to_all_pixels_gpu(&pro_que, &mut canvas, &buffer, rust_buffer.clone(), zoom)?;
-        #[cfg(feature = "cpu")]
+        #[cfg(not(feature = "gpu"))]
         apply_to_all_pixels_cpu(&mut canvas, zoom);
         println!("Fps : {}", 1.0f32 / now.elapsed().as_secs_f32());
         canvas.present();
