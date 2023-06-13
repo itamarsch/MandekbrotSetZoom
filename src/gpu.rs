@@ -17,7 +17,7 @@ pub fn apply_to_all_pixels_gpu(
     zoom: f64,
 ) -> ocl::Result<()> {
     let kernel = pro_que
-        .kernel_builder("add")
+        .kernel_builder("mandelbrot")
         .arg(buffer)
         .arg(MAX_ITERATIONS)
         .arg(SCREEN_WIDTH)

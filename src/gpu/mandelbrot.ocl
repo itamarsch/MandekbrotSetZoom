@@ -1,8 +1,8 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
-__kernel void add(__global ushort *buffer, ushort max_iterations, double width,
-                  double height, double zoomRe, double zoomImg, double offset_x,
-                  double offset_y) {
+__kernel void mandelbrot(__global ushort *buffer, ushort max_iterations,
+                         double width, double height, double zoomRe,
+                         double zoomImg, double offset_x, double offset_y) {
   int ix = get_global_id(0);
   int iy = get_global_id(1);
 
