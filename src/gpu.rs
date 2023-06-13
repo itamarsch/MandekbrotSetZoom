@@ -5,7 +5,9 @@ use sdl2::{rect::Point, render::Canvas, video::Window};
 
 pub const GPU_PROGRAM: &'static str = include_str!("./gpu/mandelbrot.ocl");
 
-use crate::{mandelbrot_color, MAX_ITERATIONS, OFFSET, SCREEN_HEIGHT, SCREEN_RATIO, SCREEN_WIDTH};
+use crate::{
+    palette::mandelbrot_color, MAX_ITERATIONS, OFFSET, SCREEN_HEIGHT, SCREEN_RATIO, SCREEN_WIDTH,
+};
 
 pub fn apply_to_all_pixels_gpu(
     pro_que: &ProQue,
