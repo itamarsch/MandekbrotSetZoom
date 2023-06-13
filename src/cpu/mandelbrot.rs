@@ -16,10 +16,10 @@ pub fn mandelbrot_iterations(c: Complex) -> u16 {
     loop {
         z0 = z0 * z0 + c;
         let mag_squared = z0.mag_squared();
+        iterations += 1;
         if mag_squared > (4f64) || iterations == MAX_ITERATIONS {
             break iterations;
         }
-        iterations += 1;
     }
 }
 
