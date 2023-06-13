@@ -16,8 +16,9 @@ mod gpu;
 #[allow(unused_imports)]
 use gpu::{apply_to_all_pixels_gpu, GPU_PROGRAM};
 
-const SCREEN_SIDE: f64 = 800f64;
-const HALF_SCREEN_SIDE: i32 = (SCREEN_SIDE / 2.0) as i32;
+const SCREEN_HEIGHT: f64 = SCREEN_WIDTH * (1.0 / SCREEN_RATIO);
+const SCREEN_WIDTH: f64 = 1000f64;
+const SCREEN_RATIO: f64 = 16.0 / 9.0;
 
 pub const MAX_ITERATIONS: u16 = 2000;
 pub const OFFSET: (f64, f64) = (-0.7746806106269039, -0.1374168856037867);
@@ -26,7 +27,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let video_subsystem = sdl_context.video()?;
 
     let window = video_subsystem
-        .window("Mandelbrot set", SCREEN_SIDE as u32, SCREEN_SIDE as u32)
+        .window("Mandelbrot set", SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32)
         .position(0, 0)
         .borderless()
         .build()?;
@@ -36,7 +37,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     // These lines are useless when running on CPU
     let pro_que = ProQue::builder()
         .src(GPU_PROGRAM)
-        .dims((SCREEN_SIDE, SCREEN_SIDE))
+        .dims((SCREEN_WIDTH, SCREEN_HEIGHT))
         .build()?;
     let buffer = pro_que.create_buffer::<u16>()?;
     let rust_buffer = RefCell::new(vec![0u16; buffer.len()]);

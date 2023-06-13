@@ -1,15 +1,15 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 __kernel void add(__global ushort *buffer, ushort max_iterations, double width,
-                  int halfWidth, double zoom, double offset_x,
+                  double height, double zoomRe, double zoomImg, double offset_x,
                   double offset_y) {
   int ix = get_global_id(0);
   int iy = get_global_id(1);
 
   double cRe = (((double)ix) / width) - 0.5;
-  double cImg = (((double)iy) / width) - 0.5;
-  cRe *= zoom;
-  cImg *= zoom;
+  double cImg = (((double)iy) / height) - 0.5;
+  cRe *= zoomRe;
+  cImg *= zoomImg;
   cRe += offset_x;
   cImg += offset_y;
 

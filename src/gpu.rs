@@ -5,7 +5,7 @@ use sdl2::{rect::Point, render::Canvas, video::Window};
 
 pub const GPU_PROGRAM: &'static str = include_str!("./gpu/mandelbrot.ocl");
 
-use crate::{mandelbrot_color, HALF_SCREEN_SIDE, MAX_ITERATIONS, OFFSET, SCREEN_SIDE};
+use crate::{mandelbrot_color, MAX_ITERATIONS, OFFSET, SCREEN_HEIGHT, SCREEN_RATIO, SCREEN_WIDTH};
 
 pub fn apply_to_all_pixels_gpu(
     pro_que: &ProQue,
@@ -18,8 +18,9 @@ pub fn apply_to_all_pixels_gpu(
         .kernel_builder("add")
         .arg(buffer)
         .arg(MAX_ITERATIONS)
-        .arg(SCREEN_SIDE)
-        .arg(HALF_SCREEN_SIDE)
+        .arg(SCREEN_WIDTH)
+        .arg(SCREEN_HEIGHT)
+        .arg(zoom * SCREEN_RATIO)
         .arg(zoom)
         .arg(OFFSET.0)
         .arg(OFFSET.1)
@@ -37,8 +38,8 @@ pub fn apply_to_all_pixels_gpu(
         .iter()
         .enumerate()
         .for_each(|(index, iterations)| {
-            let y = index / SCREEN_SIDE as usize;
-            let x = index % SCREEN_SIDE as usize;
+            let y = index / SCREEN_WIDTH as usize;
+            let x = index % SCREEN_WIDTH as usize;
 
             let rgb = mandelbrot_color(*iterations);
             draw.set_draw_color(rgb);
