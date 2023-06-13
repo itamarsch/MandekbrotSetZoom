@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 
     let window = video_subsystem
         .window("Mandelbrot set", SCREEN_WIDTH as u32, SCREEN_HEIGHT as u32)
-        .position(0, 0)
+        .position_centered()
         .borderless()
         .build()?;
 
