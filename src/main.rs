@@ -47,15 +47,8 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     'main: loop {
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
-                    ..
-                } => break 'main,
-                Event::KeyDown {
-                    keycode: Some(Keycode::Space),
-                    ..
-                } => is_zooming = !is_zooming,
+                Event::Quit { .. } | keyDown!(Keycode::Escape) => break 'main,
+                keyDown!(Keycode::Space) => is_zooming = !is_zooming,
                 _ => (),
             }
         }
@@ -70,4 +63,14 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     }
 
     Ok(())
+}
+
+#[macro_export]
+macro_rules! keyDown {
+    ($keycode:path) => {
+        Event::KeyDown {
+            keycode: Some($keycode),
+            ..
+        }
+    };
 }
